@@ -8,9 +8,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.practicum.RequestDto;
-import ru.practicum.RequestOutputDto;
-import ru.practicum.StatsClient;
+import ru.practicum.HitRequestDto;
+import ru.practicum.HitResponseDto;
+import ru.practicum.AnalyticsClient;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.dto.EventFullDto;
@@ -49,7 +49,7 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final EventMapper eventMapper;
-    private final StatsClient statsClient = new StatsClient("http://ewm-stats-server:9090");
+    private final AnalyticsClient analyticsClient = new AnalyticsClient("http://ewm-stats-server:9090");
 
     @Override
     public List<EventFullDto> getAdminEvents(List<Long> users, List<EventState> states, List<Long> categories,
@@ -209,19 +209,19 @@ public class EventServiceImpl implements EventService {
     }
 
     private void updateViews(List<Event> events, HttpServletRequest request) {
-        RequestDto requestDto = new RequestDto();
-        requestDto.setIp(request.getRemoteAddr());
-        requestDto.setUri(request.getRequestURI());
-        requestDto.setTimestamp(LocalDateTime.now());
-        requestDto.setApp("main-service");
+        HitRequestDto hitRequestDto = new HitRequestDto();
+        hitRequestDto.setIp(request.getRemoteAddr());
+        hitRequestDto.setUri(request.getRequestURI());
+        hitRequestDto.setTimestamp(LocalDateTime.now());
+        hitRequestDto.setApp("main-service");
 
-        ResponseEntity<List<RequestOutputDto>> listResponseEntity = statsClient.getStatsByIp(LocalDateTime.now().minusHours(1).format(DTF),
+        ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStatsByIp(LocalDateTime.now().minusHours(1).format(DTF),
                 LocalDateTime.now().format(DTF),
                 Collections.singletonList(requestDto.getUri()),
                 true,
                 request.getRemoteAddr());
 
-        statsClient.addRequest(requestDto);
+        analyticsClient.addRequest(hitRequestDto);
 
         if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
                 Optional.ofNullable(listResponseEntity.getBody())
