@@ -3,6 +3,7 @@ package ru.practicum;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 @Data
 @Getter
@@ -10,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HitResponseDto {
+public class HitResponseDto implements Serializable {
 
     @NotBlank
     private String app;

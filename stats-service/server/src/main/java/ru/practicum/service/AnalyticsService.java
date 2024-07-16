@@ -10,4 +10,6 @@ public interface AnalyticsService {
     void addRequest(HitRequestDto hitRequestDto);
 
     List<HitResponseDto> getRequestsWithViews(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique);
+
+    List<HitResponseDto> getRequestsWithViewsByIp(LocalDateTime startDT, LocalDateTime endDT, List<String> uris, Boolean unique, String ip);
 }
