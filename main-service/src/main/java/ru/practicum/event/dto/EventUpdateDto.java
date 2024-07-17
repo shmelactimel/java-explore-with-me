@@ -34,6 +34,7 @@ public class EventUpdateDto {
 
     private Boolean paid;
 
+    @PositiveOrZero
     private Long participantLimit;
 
     private Boolean requestModeration;
