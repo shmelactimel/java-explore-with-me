@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class NewEventDto {
 
-    @NotNull
+    @NotBlank
     @Size(min = 20, max = 2000)
     private String annotation;
 
     @NotNull
     private Long category;
 
-    @NotNull
+    @NotBlank
     @Size(min = 20, max = 7000)
     private String description;
 
