@@ -59,7 +59,7 @@ public class AnalyticsController {
     }
 
     @GetMapping("/statsByIp")
-    public ResponseEntity<List<HitResponsetDto>> statsByIp(@RequestParam String start,
+    public ResponseEntity<List<HitResponseDto>> statsByIp(@RequestParam String start,
                                                             @RequestParam String end,
                                                             @RequestParam(required = false) List<String> uris,
                                                             @RequestParam(defaultValue = "false") Boolean unique,
