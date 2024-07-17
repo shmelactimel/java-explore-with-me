@@ -170,6 +170,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getUserEventById(Long userId, Long eventId) {
+        if (newEventDto.getAnnotation() == null || newEventDto.getAnnotation().trim().isEmpty()) {
+            throw new IncorrectRequestException("Annotation must not be blank or whitespace only");
+        }
+        if (newEventDto.getDescription() == null || newEventDto.getDescription().trim().isEmpty()) {
+            throw new IncorrectRequestException("Description must not be blank or whitespace only");
+        }
+
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() -> {
             throw new ObjectNotFoundException("Event with id = " + eventId + " and user id = " + userId + " is not found.");
         });
