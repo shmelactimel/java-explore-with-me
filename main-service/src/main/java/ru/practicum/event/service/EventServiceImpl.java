@@ -49,7 +49,7 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final EventMapper eventMapper;
-    private final AnalyticsClient analyticsClient = new AnalyticsClient("http://ewm-stats-server:9090");
+    private final AnalyticsClient analyticsClient;
 
     @Override
     public List<EventFullDto> getAdminEvents(List<Long> users, List<EventState> states, List<Long> categories,
