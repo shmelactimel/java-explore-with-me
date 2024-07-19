@@ -1,7 +1,6 @@
 package ru.practicum.category.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,9 +14,7 @@ import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ObjectNotFoundException;
 import ru.practicum.exception.RequestConflictException;
-import ru.practicum.exception.SQLConstraintViolationException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
