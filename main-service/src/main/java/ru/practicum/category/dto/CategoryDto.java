@@ -9,7 +9,5 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryDto extends NewCategoryDto {
-
-    @JsonFormat(shape = JsonFormat.Shape.NUMBER_INT)
     private Long id;
 }

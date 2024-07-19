@@ -18,7 +18,6 @@ public class NewUserRequestDto {
     @Length(min = 2, max = 250)
     private String name;
 
-    @NotNull
     @NotBlank
     @Email
     @Length(min = 6, max = 254)
