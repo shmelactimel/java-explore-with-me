@@ -33,12 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto add(NewCategoryDto newCategoryDto) {
 
         Category category = categoryMapper.newCategoryDtoToCategory(newCategoryDto);
-
-        try {
-            category = categoryRepository.save(category);
-        } catch (DataIntegrityViolationException e) {
-            throw new SQLConstraintViolationException("Category with name = " + newCategoryDto.getName() + " already exists.");
-        }
+        category = categoryRepository.save(category);
 
         return categoryMapper.categoryToCategoryDto(category);
     }
@@ -51,12 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
         });
 
         category.setName(categoryDto.getName());
-
-        try {
-            category = categoryRepository.save(category);
-        } catch (DataIntegrityViolationException e) {
-            throw new SQLConstraintViolationException("Category with name = " + categoryDto.getName() + " already exists.");
-        }
+        category = categoryRepository.save(category);
 
         return categoryMapper.categoryToCategoryDto(category);
     }
@@ -91,10 +81,8 @@ public class CategoryServiceImpl implements CategoryService {
         Sort sort = Sort.by("id").ascending();
         Pageable pageable = PageRequest.of(from / size, size, sort);
 
-        List<CategoryDto> categories = categoryRepository.findAll(pageable).stream()
+        return categoryRepository.findAll(pageable).stream()
                 .map(categoryMapper::categoryToCategoryDto)
                 .collect(Collectors.toList());
-
-        return (!categories.isEmpty()) ? categories : new ArrayList<>();
     }
 }

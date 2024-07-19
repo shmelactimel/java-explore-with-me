@@ -35,4 +35,12 @@ public class MainServiceExceptionHandler {
         log.error(e.getMessage());
         return new ApiError(HttpStatus.BAD_REQUEST.toString(), reason, e.getMessage(), LocalDateTime.now());
     }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public ApiError handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        String reason = "Integrity constraint has been violated.";
+        log.error(e.getMessage());
+        return new ApiError(HttpStatus.CONFLICT.toString(), reason, e.getMessage(), LocalDateTime.now());
+    }
 }
