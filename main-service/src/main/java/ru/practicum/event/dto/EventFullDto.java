@@ -53,7 +53,7 @@ public class EventFullDto {
 
     private Boolean requestModeration;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private EventState state;
 
     private Long views;
