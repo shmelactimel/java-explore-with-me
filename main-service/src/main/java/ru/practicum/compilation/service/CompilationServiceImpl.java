@@ -79,11 +79,10 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public void delete(Long compId) {
-        try {
-            compilationRepository.deleteById(compId);
-        } catch (EmptyResultDataAccessException e) {
+        if (!compilationRepository.existsById(compId)) {
             throw new ObjectNotFoundException("Compilation with id = " + compId + " doesn't exist.");
         }
+        compilationRepository.deleteById(compId);
     }
 
     private void updateComp(Compilation compilation, UpdateCompilationRequest compRequest) {
