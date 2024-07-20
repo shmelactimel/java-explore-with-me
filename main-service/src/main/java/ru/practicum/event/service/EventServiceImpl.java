@@ -215,7 +215,7 @@ public class EventServiceImpl implements EventService {
         hitRequestDto.setTimestamp(LocalDateTime.now());
         hitRequestDto.setApp("main-service");
 
-        LocalDateTime start = event.getPublishedOn();
+        LocalDateTime start = events.getPublishedOn();
         LocalDateTime end = LocalDateTime.now();
 
         ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStatsByIp(
@@ -236,7 +236,6 @@ public class EventServiceImpl implements EventService {
             eventRepository.saveAll(events);
         }
     }
-
 
     private void updateEvent(Event event, Long userId, NewEventDto eventDto) {
         User initiator = userRepository.findById(userId).orElseThrow(() -> {
