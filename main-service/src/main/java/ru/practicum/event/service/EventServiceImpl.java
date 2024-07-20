@@ -233,11 +233,11 @@ public class EventServiceImpl implements EventService {
             if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
                     Optional.ofNullable(listResponseEntity.getBody())
                             .map(List::isEmpty).orElse(false)) {
-                event.setViews(event.getViews() + 1);
+                events.forEach(event -> {
+                    event.setViews(event.getViews() + 1);
+                });
+                eventRepository.saveAll(events);
             }
-        });
-
-        eventRepository.saveAll(events);
     }
 
 
