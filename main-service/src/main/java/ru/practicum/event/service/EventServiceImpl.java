@@ -216,8 +216,9 @@ public class EventServiceImpl implements EventService {
         hitRequestDto.setApp("main-service");
 
         // Функция для обновления просмотров для конкретного события
-        LocalDateTime start = events.get(0).getPublishedOn(); // Устанавливаем начальную дату на основе первого события
-        LocalDateTime end = LocalDateTime.now();
+        events.forEach(event -> {
+            LocalDateTime start = event.getPublishedOn() != null ? event.getPublishedOn() : LocalDateTime.now().minusYears(1);
+            LocalDateTime end = LocalDateTime.now();
 
             ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStatsByIp(
                     start.format(DTF),
@@ -232,13 +233,13 @@ public class EventServiceImpl implements EventService {
             if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
                     Optional.ofNullable(listResponseEntity.getBody())
                             .map(List::isEmpty).orElse(false)) {
-                event.setViews(event.getViews() + 1);
-            }
+                events.forEach(event -> {
+                    event.setViews(event.getViews() + 1);
+                });
         });
 
         eventRepository.saveAll(events);
     }
-
 
     private void updateEvent(Event event, Long userId, NewEventDto eventDto) {
         User initiator = userRepository.findById(userId).orElseThrow(() -> {
