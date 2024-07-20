@@ -215,27 +215,30 @@ public class EventServiceImpl implements EventService {
         hitRequestDto.setTimestamp(LocalDateTime.now());
         hitRequestDto.setApp("main-service");
 
-        LocalDateTime start = events.getPublishedOn();
+        // Функция для обновления просмотров для конкретного события
+        LocalDateTime start = events.get(0).getPublishedOn(); // Устанавливаем начальную дату на основе первого события
         LocalDateTime end = LocalDateTime.now();
 
-        ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStatsByIp(
-                start.format(DTF),
-                end.format(DTF),
-                Collections.singletonList(hitRequestDto.getUri()),
-                true,
-                request.getRemoteAddr());
+            ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStatsByIp(
+                    start.format(DTF),
+                    end.format(DTF),
+                    Collections.singletonList(hitRequestDto.getUri()),
+                    true,
+                    request.getRemoteAddr()
+            );
 
-        analyticsClient.addRequest(hitRequestDto);
+            analyticsClient.addRequest(hitRequestDto);
 
-        if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
-                Optional.ofNullable(listResponseEntity.getBody())
-                        .map(List::isEmpty).orElse(false)) {
-            events.forEach(event -> {
+            if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
+                    Optional.ofNullable(listResponseEntity.getBody())
+                            .map(List::isEmpty).orElse(false)) {
                 event.setViews(event.getViews() + 1);
-            });
-            eventRepository.saveAll(events);
-        }
+            }
+        });
+
+        eventRepository.saveAll(events);
     }
+
 
     private void updateEvent(Event event, Long userId, NewEventDto eventDto) {
         User initiator = userRepository.findById(userId).orElseThrow(() -> {
