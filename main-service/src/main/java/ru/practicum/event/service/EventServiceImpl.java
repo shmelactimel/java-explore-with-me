@@ -209,31 +209,42 @@ public class EventServiceImpl implements EventService {
     }
 
     private void updateViews(List<Event> events, HttpServletRequest request) {
-        for (Event event : events) {
-            HitRequestDto hitRequestDto = new HitRequestDto();
-            hitRequestDto.setIp(request.getRemoteAddr());
-            hitRequestDto.setUri(request.getRequestURI());
-            hitRequestDto.setTimestamp(LocalDateTime.now());
-            hitRequestDto.setApp("main-service");
+        // Получите IP и URI из запроса
+        String ip = request.getRemoteAddr();
+        String uri = request.getRequestURI();
+
+        // Добавьте запрос на получение статистики
+        HitRequestDto hitRequestDto = new HitRequestDto();
+        hitRequestDto.setIp(ip);
+        hitRequestDto.setUri(uri);
+        hitRequestDto.setTimestamp(LocalDateTime.now());
+        hitRequestDto.setApp("main-service");
+
+        // Отправьте запрос на получение статистики по событиям
+        events.forEach(event -> {
+            LocalDateTime startTime = event.getPublishedOn();
+            LocalDateTime endTime = LocalDateTime.now();
 
             ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStatsByIp(
-                    event.getPublishedOn().format(DTF),
-                    LocalDateTime.now().format(DTF),
-                    Collections.singletonList(hitRequestDto.getUri()),
+                    startTime.format(DTF),
+                    endTime.format(DTF),
+                    Collections.singletonList(uri),
                     true,
-                    request.getRemoteAddr());
+                    ip
+            );
 
+            // Добавьте новый запрос в статистику
             analyticsClient.addRequest(hitRequestDto);
 
+            // Проверьте статус ответа и обновите просмотры событий
             if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
-                    Optional.ofNullable(listResponseEntity.getBody())
-                            .map(List::isEmpty).orElse(false)) {
-                events.forEach(event -> {
-                    event.setViews(event.getViews() + 1);
-                });
-                eventRepository.saveAll(events);
+                    Optional.ofNullable(listResponseEntity.getBody()).map(List::isEmpty).orElse(false)) {
+                event.setViews(event.getViews() + 1);
             }
-        }
+        });
+
+        // Сохраните обновленные события
+        eventRepository.saveAll(events);
     }
 
     private void updateEvent(Event event, Long userId, NewEventDto eventDto) {
