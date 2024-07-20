@@ -215,29 +215,25 @@ public class EventServiceImpl implements EventService {
         hitRequestDto.setTimestamp(LocalDateTime.now());
         hitRequestDto.setApp("main-service");
 
-        // Функция для обновления просмотров для конкретного события
-        events.forEach(event -> {
-            LocalDateTime start = event.getPublishedOn() != null ? event.getPublishedOn() : LocalDateTime.now().minusYears(1);
-            LocalDateTime end = LocalDateTime.now();
+        LocalDateTime start = event.getPublishedOn();
+        LocalDateTime end = LocalDateTime.now();
 
-            ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStatsByIp(
-                    start.format(DTF),
-                    end.format(DTF),
-                    Collections.singletonList(hitRequestDto.getUri()),
-                    true,
-                    request.getRemoteAddr()
-            );
+        ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStatsByIp(
+                start.format(DTF),
+                end.format(DTF),
+                Collections.singletonList(hitRequestDto.getUri()),
+                true,
+                request.getRemoteAddr());
 
-            analyticsClient.addRequest(hitRequestDto);
+        analyticsClient.addRequest(hitRequestDto);
 
-            if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
-                    Optional.ofNullable(listResponseEntity.getBody())
-                            .map(List::isEmpty).orElse(false)) {
-                events.forEach(event -> {
-                    event.setViews(event.getViews() + 1);
-                });
-                eventRepository.saveAll(events);
-            }
+        if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
+                Optional.ofNullable(listResponseEntity.getBody())
+                        .map(List::isEmpty).orElse(false)) {
+            events.forEach(event -> {
+                event.setViews(event.getViews() + 1);
+            });
+            eventRepository.saveAll(events);
         }
     }
 
