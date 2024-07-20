@@ -215,23 +215,31 @@ public class EventServiceImpl implements EventService {
         hitRequestDto.setTimestamp(LocalDateTime.now());
         hitRequestDto.setApp("main-service");
 
-        ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStatsByIp(LocalDateTime.now().minusYears(1).format(DTF),
-                LocalDateTime.now().format(DTF),
-                Collections.singletonList(hitRequestDto.getUri()),
-                true,
-                request.getRemoteAddr());
+        // Функция для обновления просмотров для конкретного события
+        events.forEach(event -> {
+            LocalDateTime start = event.getPublishedOn() != null ? event.getPublishedOn() : LocalDateTime.now().minusYears(1);
+            LocalDateTime end = LocalDateTime.now();
 
-        analyticsClient.addRequest(hitRequestDto);
+            ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStatsByIp(
+                    start.format(DTF),
+                    end.format(DTF),
+                    Collections.singletonList(hitRequestDto.getUri()),
+                    true,
+                    request.getRemoteAddr()
+            );
 
-        if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
-                Optional.ofNullable(listResponseEntity.getBody())
-                        .map(List::isEmpty).orElse(false)) {
-            events.forEach(event -> {
+            analyticsClient.addRequest(hitRequestDto);
+
+            if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
+                    Optional.ofNullable(listResponseEntity.getBody())
+                            .map(List::isEmpty).orElse(false)) {
                 event.setViews(event.getViews() + 1);
-            });
-            eventRepository.saveAll(events);
-        }
+            }
+        });
+
+        eventRepository.saveAll(events);
     }
+
 
     private void updateEvent(Event event, Long userId, NewEventDto eventDto) {
         User initiator = userRepository.findById(userId).orElseThrow(() -> {
