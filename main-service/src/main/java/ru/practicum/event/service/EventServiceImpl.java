@@ -209,42 +209,38 @@ public class EventServiceImpl implements EventService {
     }
 
     private void updateViews(List<Event> events, HttpServletRequest request) {
-        // Получите IP и URI из запроса
-        String ip = request.getRemoteAddr();
-        String uri = request.getRequestURI();
+        // Получаем текущее время
+        LocalDateTime now = LocalDateTime.now();
 
-        // Добавьте запрос на получение статистики
-        HitRequestDto hitRequestDto = new HitRequestDto();
-        hitRequestDto.setIp(ip);
-        hitRequestDto.setUri(uri);
-        hitRequestDto.setTimestamp(LocalDateTime.now());
-        hitRequestDto.setApp("main-service");
-
-        // Отправьте запрос на получение статистики по событиям
+        // Проходим по каждому событию
         events.forEach(event -> {
-            LocalDateTime startTime = event.getPublishedOn();
-            LocalDateTime endTime = LocalDateTime.now();
+            // Создаем объект HitRequestDto
+            HitRequestDto hitRequestDto = new HitRequestDto();
+            hitRequestDto.setIp(request.getRemoteAddr());
+            hitRequestDto.setUri(request.getRequestURI());
+            hitRequestDto.setTimestamp(now);
+            hitRequestDto.setApp("main-service");
 
+            // Запрашиваем статистику
             ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStatsByIp(
-                    startTime.format(DTF),
-                    endTime.format(DTF),
-                    Collections.singletonList(uri),
+                    event.getPublishedOn().format(DTF),
+                    now.format(DTF),
+                    Collections.singletonList(hitRequestDto.getUri()),
                     true,
-                    ip
-            );
+                    request.getRemoteAddr());
 
-            // Добавьте новый запрос в статистику
+            // Добавляем запрос в статистику
             analyticsClient.addRequest(hitRequestDto);
 
-            // Проверьте статус ответа и обновите просмотры событий
+            // Если запрос выполнен успешно и данные о хите существуют
             if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
-                    Optional.ofNullable(listResponseEntity.getBody()).map(List::isEmpty).orElse(false)) {
+                    Optional.ofNullable(listResponseEntity.getBody())
+                            .map(List::isEmpty).orElse(false)) {
+                // Увеличиваем количество просмотров
                 event.setViews(event.getViews() + 1);
+                eventRepository.save(event); // Сохраняем изменения
             }
         });
-
-        // Сохраните обновленные события
-        eventRepository.saveAll(events);
     }
 
     private void updateEvent(Event event, Long userId, NewEventDto eventDto) {
