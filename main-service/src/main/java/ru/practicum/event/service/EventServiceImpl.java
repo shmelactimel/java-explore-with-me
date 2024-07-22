@@ -245,7 +245,7 @@ public class EventServiceImpl implements EventService {
                         .filter(hitResponse -> hitResponse.getUri().equals(request.getRequestURI()))
                         .findFirst();
 
-                hitResponseOpt.ifPresent(hitResponse -> event.setViews(event.getViews() + hitResponse.getHits()));
+                hitResponseOpt.ifPresent(hitResponse -> event.setViews(event.getViews() + 1));
 
                 eventRepository.save(event); // Сохраняем изменения
             }
