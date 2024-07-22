@@ -16,29 +16,26 @@ public class AnalyticsClient {
     }
 
     public void addRequest(HitRequestDto hitRequestDto) {
-        webClient.post().uri("/hit").bodyValue(hitRequestDto).retrieve().bodyToMono(Object.class).block();
+        webClient.post().uri("/hit").bodyValue(hitRequestDto).retrieve().bodyToMono(Void.class).block();
     }
 
-    public ResponseEntity<List<HitResponseDto>> getStats(String start,
-                                                         String end,
-                                                         List<String> uris,
-                                                         Boolean unique) {
-
-        ResponseEntity<List<HitResponseDto>> listResponseEntity = webClient.get()
+    public ResponseEntity<List<HitResponseDto>> getStats(String start, String end, List<String> uris, Boolean unique) {
+        return webClient.get()
                 .uri(uriBuilder -> {
                     uriBuilder.path("/stats")
                             .queryParam("start", start)
                             .queryParam("end", end);
-                    if (uris != null)
+                    if (uris != null && !uris.isEmpty()) {
                         uriBuilder.queryParam("uris", String.join(",", uris));
-                    if (unique != null)
+                    }
+                    if (unique != null) {
                         uriBuilder.queryParam("unique", unique);
+                    }
                     return uriBuilder.build();
                 })
                 .retrieve()
                 .toEntityList(HitResponseDto.class)
                 .block();
-        return listResponseEntity;
     }
 
     public ResponseEntity<List<HitResponseDto>> getStatsByIp(String start,
