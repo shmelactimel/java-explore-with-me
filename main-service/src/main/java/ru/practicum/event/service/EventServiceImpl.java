@@ -209,22 +209,20 @@ public class EventServiceImpl implements EventService {
     }
 
     private void updateViews(List<Event> events, HttpServletRequest request) {
-        // Получаем текущее время
         LocalDateTime now = LocalDateTime.now();
 
-        // Создаем список URI для событий
         List<String> uris = events.stream()
-                .map(event -> request.getRequestURI())
+                .map(event -> "/events/" + event.getId())
                 .collect(Collectors.toList());
 
-        // Создаем объект HitRequestDto
         HitRequestDto hitRequestDto = new HitRequestDto();
         hitRequestDto.setIp(request.getRemoteAddr());
         hitRequestDto.setUri(request.getRequestURI());
         hitRequestDto.setTimestamp(now);
         hitRequestDto.setApp("main-service");
 
-        // Запрашиваем статистику для всех URI
+        analyticsClient.addRequest(hitRequestDto);
+
         ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStats(
                 events.get(0).getPublishedOn().format(DTF),
                 now.format(DTF),
@@ -232,22 +230,17 @@ public class EventServiceImpl implements EventService {
                 true
         );
 
-        // Добавляем запрос в статистику
-        analyticsClient.addRequest(hitRequestDto);
-
-        // Если запрос выполнен успешно и данные о хите существуют
         if (listResponseEntity.getStatusCode() == HttpStatus.OK && listResponseEntity.getBody() != null) {
             List<HitResponseDto> hitResponses = listResponseEntity.getBody();
 
-            // Проходим по каждому событию и обновляем количество просмотров
             for (Event event : events) {
                 Optional<HitResponseDto> hitResponseOpt = hitResponses.stream()
-                        .filter(hitResponse -> hitResponse.getUri().equals(request.getRequestURI()))
+                        .filter(hitResponse -> hitResponse.getUri().equals("/events/" + event.getId()))
                         .findFirst();
 
-                hitResponseOpt.ifPresent(hitResponse -> event.setViews(event.getViews() + 1));
+                hitResponseOpt.ifPresent(hitResponse -> event.setViews(hitResponse.getHits()));
 
-                eventRepository.save(event); // Сохраняем изменения
+                eventRepository.save(event);
             }
         }
     }
