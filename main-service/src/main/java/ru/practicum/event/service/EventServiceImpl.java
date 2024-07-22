@@ -212,35 +212,44 @@ public class EventServiceImpl implements EventService {
         // Получаем текущее время
         LocalDateTime now = LocalDateTime.now();
 
-        // Проходим по каждому событию
-        events.forEach(event -> {
-            // Создаем объект HitRequestDto
-            HitRequestDto hitRequestDto = new HitRequestDto();
-            hitRequestDto.setIp(request.getRemoteAddr());
-            hitRequestDto.setUri(request.getRequestURI());
-            hitRequestDto.setTimestamp(now);
-            hitRequestDto.setApp("main-service");
+        // Создаем список URI для событий
+        List<String> uris = events.stream()
+                .map(event -> request.getRequestURI())
+                .collect(Collectors.toList());
 
-            // Запрашиваем статистику
-            ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStatsByIp(
-                    event.getPublishedOn().format(DTF),
-                    now.format(DTF),
-                    Collections.singletonList(hitRequestDto.getUri()),
-                    true,
-                    request.getRemoteAddr());
+        // Создаем объект HitRequestDto
+        HitRequestDto hitRequestDto = new HitRequestDto();
+        hitRequestDto.setIp(request.getRemoteAddr());
+        hitRequestDto.setUri(request.getRequestURI());
+        hitRequestDto.setTimestamp(now);
+        hitRequestDto.setApp("main-service");
 
-            // Добавляем запрос в статистику
-            analyticsClient.addRequest(hitRequestDto);
+        // Запрашиваем статистику для всех URI
+        ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStats(
+                events.get(0).getPublishedOn().format(DTF),
+                now.format(DTF),
+                uris,
+                true
+        );
 
-            // Если запрос выполнен успешно и данные о хите существуют
-            if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
-                    Optional.ofNullable(listResponseEntity.getBody())
-                            .map(List::isEmpty).orElse(false)) {
-                // Увеличиваем количество просмотров
-                event.setViews(event.getViews() + 1);
+        // Добавляем запрос в статистику
+        analyticsClient.addRequest(hitRequestDto);
+
+        // Если запрос выполнен успешно и данные о хите существуют
+        if (listResponseEntity.getStatusCode() == HttpStatus.OK && listResponseEntity.getBody() != null) {
+            List<HitResponseDto> hitResponses = listResponseEntity.getBody();
+
+            // Проходим по каждому событию и обновляем количество просмотров
+            for (Event event : events) {
+                Optional<HitResponseDto> hitResponseOpt = hitResponses.stream()
+                        .filter(hitResponse -> hitResponse.getUri().equals(request.getRequestURI()))
+                        .findFirst();
+
+                hitResponseOpt.ifPresent(hitResponse -> event.setViews(event.getViews() + hitResponse.getHits()));
+
                 eventRepository.save(event); // Сохраняем изменения
             }
-        });
+        }
     }
 
     private void updateEvent(Event event, Long userId, NewEventDto eventDto) {
