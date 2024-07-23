@@ -239,8 +239,6 @@ public class EventServiceImpl implements EventService {
                         .findFirst();
 
                 hitResponseOpt.ifPresent(hitResponse -> event.setViews(hitResponse.getHits()));
-
-                eventRepository.save(event);
             }
         }
     }
