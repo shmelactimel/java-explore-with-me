@@ -10,9 +10,6 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
-@Getter
-@Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class HitRequestDto {
@@ -35,4 +32,11 @@ public class HitRequestDto {
     @JsonProperty("timestamp")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
+
+    public HitRequestDto(String app, String uri, String ip, LocalDateTime timestamp) {
+        this.app = app;
+        this.uri = uri;
+        this.ip = ip;
+        this.timestamp = timestamp;
+    }
 }
