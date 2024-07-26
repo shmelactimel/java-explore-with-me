@@ -59,7 +59,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedback.setUser(feedbacker);
         feedback.setEvent(event);
         feedback.setCreatedOn(LocalDateTime.now());
-        feedback.setStatus(CommentStatus.PENDING);
+        feedback.setStatus(FeedbackStatus.PENDING);
 
         feedback = feedbackRepository.save(feedback);
 
