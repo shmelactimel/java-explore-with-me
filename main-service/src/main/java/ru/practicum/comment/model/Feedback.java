@@ -36,7 +36,7 @@ public class Feedback {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    private CommentStatus status;
+    private FeedbackStatus status;
 
     @ManyToOne
     @JoinColumn(name = "event_id")

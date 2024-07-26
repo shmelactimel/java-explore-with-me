@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.jpa.domain.Specification.where;
-import static ru.practicum.comment.repository.CommentSpecRepository.*;
+import static ru.practicum.comment.repository.FeedbackSpecRepository.*;
 
 @Service
 @RequiredArgsConstructor
