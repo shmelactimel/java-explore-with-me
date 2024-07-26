@@ -17,7 +17,7 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
     List<Feedback> findAllByUserIdAndEventIdAndStatus(Long userId, Long eventId, FeedbackStatus published);
 
-    void deleteByIdAndUserIdAndEventIdAndStatus(Long feedbackId, Long userId, Long eventId, CommentStatus published);
+    void deleteByIdAndUserIdAndEventIdAndStatus(Long feedbackId, Long userId, Long eventId, FeedbackStatus published);
 
     List<Feedback> findAllByIdInAndStatus(List<Long> feedbackIds, FeedbackStatus status);
 
