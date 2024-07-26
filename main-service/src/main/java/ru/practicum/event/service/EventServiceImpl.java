@@ -61,8 +61,8 @@ public class EventServiceImpl implements EventService {
 
         Pageable pageable = PageRequest.of(from / size, size, Sort.unsorted());
 
+        List<EventFullDto> eventFullDtos;
         if (users != null || states != null || categories != null || rangeStart != null || rangeEnd != null) {
-
             Page<Event> events = eventSpecRepository.findAll(where(hasUsers(users))
                             .and(hasStates(states))
                             .and(hasCategories(categories))
@@ -70,14 +70,16 @@ public class EventServiceImpl implements EventService {
                             .and(hasRangeEnd(rangeEnd)),
                     pageable);
 
-            return events.stream()
+            eventFullDtos = events.stream()
                     .map(eventMapper::eventToEventFullDto)
                     .collect(Collectors.toList());
         } else {
-            return eventRepository.findAll(pageable).stream()
+            eventFullDtos = eventRepository.findAll(pageable).stream()
                     .map(eventMapper::eventToEventFullDto)
                     .collect(Collectors.toList());
         }
+
+        return eventFullDtos;
     }
 
     @Override
@@ -130,12 +132,14 @@ public class EventServiceImpl implements EventService {
                 .and(hasRangeEnd(rangeEnd))
                 .and(hasAvailable(onlyAvailable)), pageable);
 
-        updateViews(eventsPage.toList(), request);
-
-        return eventsPage.stream()
+        List<EventShortDto> eventShortDtos = eventsPage.stream()
                 .filter(event -> event.getPublishedOn() != null)
                 .map(eventMapper::eventToShortDto)
                 .collect(Collectors.toList());
+
+        updateViews(eventShortDtos, null, request);
+
+        return eventShortDtos;
     }
 
     @Override
@@ -144,18 +148,22 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " was not found.");
         });
 
-        updateViews(Collections.singletonList(event), request);
+        EventFullDto eventFullDto = eventMapper.eventToEventFullDto(event);
 
-        return eventMapper.eventToEventFullDto(event);
+        updateViews(null, Collections.singletonList(eventFullDto), request);
+
+        return eventFullDto;
     }
 
     @Override
     public List<EventShortDto> getUserEvents(Long userId, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size, Sort.by("id").ascending());
 
-        return eventRepository.findAllByInitiatorId(userId, pageable).stream()
+        List<EventShortDto> eventShortDtos = eventRepository.findAllByInitiatorId(userId, pageable).stream()
                 .map(eventMapper::eventToShortDto)
                 .collect(Collectors.toList());
+
+        return eventShortDtos;
     }
 
     @Override
@@ -174,10 +182,11 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " and user id = " + userId + " is not found.");
         });
 
-        event.setViews(event.getViews() + 1);
+        EventFullDto eventFullDto = eventMapper.eventToEventFullDto(event);
 
-        event = eventRepository.save(event);
-        return eventMapper.eventToEventFullDto(event);
+        eventFullDto.setViews(event.getViews() + 1);
+
+        return eventFullDto;
     }
 
     @Override
