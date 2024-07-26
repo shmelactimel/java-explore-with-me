@@ -34,7 +34,7 @@ public class FeedbackController {
     @GetMapping ("/events/{eventId}/feedbacks/{feedbackId}")
     public FeedbackDto getUserFeedback(@PathVariable @Positive Long userId,
                                      @PathVariable @Positive Long eventId,
-                                     @PathVariable @Positive Long feedbacktId) {
+                                     @PathVariable @Positive Long feedbackId) {
 
         log.info("Calling GET: /users/{userId}/events/{eventId}/feedbacks/{feedbackId} with 'userId': {}, 'eventId': {}," +
                 " 'feedbackId': {}", userId, eventId, feedbackId);
