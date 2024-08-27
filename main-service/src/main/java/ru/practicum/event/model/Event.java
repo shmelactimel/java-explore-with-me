@@ -7,7 +7,7 @@ import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.model.enums.EventState;
 import ru.practicum.user.model.User;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -8,8 +8,8 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.model.Location;
 import ru.practicum.event.model.enums.StateAction;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 

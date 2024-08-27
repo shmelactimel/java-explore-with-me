@@ -5,7 +5,7 @@ import lombok.*;
 import ru.practicum.event.model.Event;
 import ru.practicum.user.model.User;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;

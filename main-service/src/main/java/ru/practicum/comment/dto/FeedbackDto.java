@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.user.dto.UserShortDto;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;

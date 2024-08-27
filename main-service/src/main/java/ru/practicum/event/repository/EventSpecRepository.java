@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.enums.EventState;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 import java.util.List;
 

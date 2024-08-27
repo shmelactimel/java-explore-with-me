@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.comment.model.Feedback;
 import ru.practicum.comment.model.FeedbackStatus;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 import java.util.List;
 

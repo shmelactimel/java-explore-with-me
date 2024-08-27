@@ -2,7 +2,7 @@ package ru.practicum.user.model;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.Size;
 
 @Entity

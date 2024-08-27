@@ -2,7 +2,7 @@ package ru.practicum.event.model;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "locations")

@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.comment.model.FeedbackStatus;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
