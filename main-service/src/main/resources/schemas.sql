@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS events (
     cat_id BIGINT NOT NULL REFERENCES categories(id) ON UPDATE CASCADE ON DELETE CASCADE,
     confirmed_requests INTEGER,
     created_on TIMESTAMP,
-    description VARCHAR,
+    description VARCHAR(7000),
     event_date TIMESTAMP NOT NULL,
     initiator BIGINT NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     location BIGINT NOT NULL REFERENCES locations(id) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS events (
     published_on TIMESTAMP WITHOUT TIME ZONE,
     request_moderation BOOLEAN DEFAULT TRUE,
     state VARCHAR,
-    title VARCHAR NOT NULL,
+    title VARCHAR(120) NOT NULL,
     views BIGINT
     );
 
