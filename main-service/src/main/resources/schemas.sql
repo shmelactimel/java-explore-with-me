@@ -20,11 +20,11 @@ CREATE TABLE IF NOT EXISTS locations (
 
 CREATE TABLE IF NOT EXISTS events (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    annotation VARCHAR(2000) NOT NULL,
+    annotation VARCHAR NOT NULL,
     cat_id BIGINT NOT NULL REFERENCES categories(id) ON UPDATE CASCADE ON DELETE CASCADE,
     confirmed_requests INTEGER,
     created_on TIMESTAMP,
-    description VARCHAR(7000),
+    description VARCHAR,
     event_date TIMESTAMP NOT NULL,
     initiator BIGINT NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     location BIGINT NOT NULL REFERENCES locations(id) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS events (
     published_on TIMESTAMP WITHOUT TIME ZONE,
     request_moderation BOOLEAN DEFAULT TRUE,
     state VARCHAR,
-    title VARCHAR(120) NOT NULL,
+    title VARCHAR NOT NULL,
     views BIGINT
     );
 
