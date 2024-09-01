@@ -10,7 +10,7 @@ import ru.practicum.event.model.enums.StateAction;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data

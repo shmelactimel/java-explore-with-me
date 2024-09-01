@@ -7,8 +7,8 @@ import ru.practicum.event.model.enums.EventStatus;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @Data

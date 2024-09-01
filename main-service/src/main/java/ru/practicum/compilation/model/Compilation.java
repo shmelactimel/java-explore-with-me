@@ -4,7 +4,7 @@ import lombok.*;
 import ru.practicum.event.model.Event;
 
 import jakarta.persistence.*;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 

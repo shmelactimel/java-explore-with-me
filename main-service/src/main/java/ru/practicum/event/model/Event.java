@@ -8,7 +8,7 @@ import ru.practicum.event.model.enums.EventState;
 import ru.practicum.user.model.User;
 
 import jakarta.persistence.*;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

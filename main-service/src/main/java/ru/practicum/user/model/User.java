@@ -3,7 +3,7 @@ package ru.practicum.user.model;
 import lombok.*;
 
 import jakarta.persistence.*;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "email"})})

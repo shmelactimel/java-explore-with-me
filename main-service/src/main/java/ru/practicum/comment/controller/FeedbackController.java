@@ -8,8 +8,8 @@ import ru.practicum.comment.dto.FeedbackDto;
 import ru.practicum.comment.dto.NewFeedbackDto;
 import ru.practicum.comment.service.FeedbackService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
