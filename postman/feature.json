@@ -249,7 +249,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"annotation\": \"11.06 Watching raccoons together in the Central park\",\r\n    \"category\": 1,\r\n    \"description\": \"Looking for pals to contemplate raccoon existence in the park\",\r\n    \"eventDate\": \"2024-06-11 13:00:00\",\r\n    \"location\": {\r\n        \"description\": \"Central park\",\r\n        \"lat\": 35.6,\r\n        \"lon\": 22.3\r\n    },\r\n    \"paid\": false,\r\n    \"participantLimit\": 0,\r\n    \"requestModeration\": true,\r\n    \"title\": \"Raccoon watching\"\r\n}",
+              "raw": "{\r\n    \"annotation\": \"11.06 Watching raccoons together in the Central park\",\r\n    \"category\": 1,\r\n    \"description\": \"Looking for pals to contemplate raccoon existence in the park\",\r\n    \"eventDate\": \"2025-06-11 13:00:00\",\r\n    \"location\": {\r\n        \"description\": \"Central park\",\r\n        \"lat\": 35.6,\r\n        \"lon\": 22.3\r\n    },\r\n    \"paid\": false,\r\n    \"participantLimit\": 0,\r\n    \"requestModeration\": true,\r\n    \"title\": \"Raccoon watching\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -350,7 +350,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"annotation\": \"15.07 Gathering in the Central Perk\",\r\n    \"category\": 2,\r\n    \"description\": \"Looking to drink coffee in a nice company\",\r\n    \"eventDate\": \"2024-07-15 17:00:00\",\r\n    \"location\": {\r\n        \"description\": \"Central Perk\",\r\n        \"lat\": 127.6,\r\n        \"lon\": 269.3\r\n    },\r\n    \"paid\": false,\r\n    \"participantLimit\": 5,\r\n    \"requestModeration\": true,\r\n    \"title\": \"F.R.I.E.N.D.S\"\r\n}",
+              "raw": "{\r\n    \"annotation\": \"15.07 Gathering in the Central Perk\",\r\n    \"category\": 2,\r\n    \"description\": \"Looking to drink coffee in a nice company\",\r\n    \"eventDate\": \"2025-07-15 17:00:00\",\r\n    \"location\": {\r\n        \"description\": \"Central Perk\",\r\n        \"lat\": 127.6,\r\n        \"lon\": 269.3\r\n    },\r\n    \"paid\": false,\r\n    \"participantLimit\": 5,\r\n    \"requestModeration\": true,\r\n    \"title\": \"F.R.I.E.N.D.S\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -451,7 +451,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"annotation\": \"20.07 Picnic gathering\",\r\n    \"category\": 2,\r\n    \"description\": \"Free pizza for all. Take a glass and a blanket\",\r\n    \"eventDate\": \"2024-07-20 15:00:00\",\r\n    \"location\": {\r\n        \"description\": \"Northern Park\",\r\n        \"lat\": 385.6,\r\n        \"lon\": 473.3\r\n    },\r\n    \"paid\": false,\r\n    \"participantLimit\": 0,\r\n    \"requestModeration\": false,\r\n    \"title\": \"Free pizza gathering\"\r\n}",
+              "raw": "{\r\n    \"annotation\": \"20.07 Picnic gathering\",\r\n    \"category\": 2,\r\n    \"description\": \"Free pizza for all. Take a glass and a blanket\",\r\n    \"eventDate\": \"2025-07-20 15:00:00\",\r\n    \"location\": {\r\n        \"description\": \"Northern Park\",\r\n        \"lat\": 385.6,\r\n        \"lon\": 473.3\r\n    },\r\n    \"paid\": false,\r\n    \"participantLimit\": 0,\r\n    \"requestModeration\": false,\r\n    \"title\": \"Free pizza gathering\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -552,7 +552,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"annotation\": \"26.08 Dog owner club meeting\",\r\n    \"category\": 1,\r\n    \"description\": \"Meet new friends with your dog at the Bright Park\",\r\n    \"eventDate\": \"2024-08-26 18:00:00\",\r\n    \"location\": {\r\n        \"description\": \"Bright Park\",\r\n        \"lat\": 184.6,\r\n        \"lon\": 274.3\r\n    },\r\n    \"paid\": false,\r\n    \"participantLimit\": 0,\r\n    \"requestModeration\": false,\r\n    \"title\": \"Dog owner club meeting\"\r\n}",
+              "raw": "{\r\n    \"annotation\": \"26.08 Dog owner club meeting\",\r\n    \"category\": 1,\r\n    \"description\": \"Meet new friends with your dog at the Bright Park\",\r\n    \"eventDate\": \"2025-08-26 18:00:00\",\r\n    \"location\": {\r\n        \"description\": \"Bright Park\",\r\n        \"lat\": 184.6,\r\n        \"lon\": 274.3\r\n    },\r\n    \"paid\": false,\r\n    \"participantLimit\": 0,\r\n    \"requestModeration\": false,\r\n    \"title\": \"Dog owner club meeting\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
