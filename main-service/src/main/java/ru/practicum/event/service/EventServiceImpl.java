@@ -184,6 +184,8 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " and user id = " + userId + " is not found.");
         });
 
+        analyticsClient.addRequest("/events/" + eventId);
+
         List<HitResponseDto> views = getViews(Collections.singletonList(event));
 
         long viewCount = views.stream()
@@ -192,7 +194,7 @@ public class EventServiceImpl implements EventService {
                 .sum();
 
         EventFullDto eventFullDto = eventMapper.eventToEventFullDto(event);
-        eventFullDto.setViews(viewCount + 1);
+        eventFullDto.setViews(viewCount);
         return eventFullDto;
     }
 
