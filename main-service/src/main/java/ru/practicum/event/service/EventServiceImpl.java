@@ -232,12 +232,11 @@ public class EventServiceImpl implements EventService {
                 .map(event -> "/events/" + event.getId())
                 .collect(Collectors.toList());
 
-        HitRequestDto hitRequestDto = HitRequestDto.builder()
-                .ip(request.getRemoteAddr())
-                .uri(request.getRequestURI())
-                .timestamp(now.format(DTF))
-                .app("main-service")
-                .build();
+        HitRequestDto hitRequestDto = new HitRequestDto();
+        hitRequestDto.setIp(request.getRemoteAddr());
+        hitRequestDto.setUri(request.getRequestURI());
+        hitRequestDto.setTimestamp(now);
+        hitRequestDto.setApp("main-service");
 
         analyticsClient.addRequest(hitRequestDto);
 
