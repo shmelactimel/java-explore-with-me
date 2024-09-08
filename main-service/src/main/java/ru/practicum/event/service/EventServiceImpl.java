@@ -189,13 +189,14 @@ public class EventServiceImpl implements EventService {
 
         List<HitResponseDto> views = getViews(Collections.singletonList(event));
 
-        event.setViews(views.stream()
+        long viewCount = views.stream()
                 .filter(view -> view.getUri().equals("/events/" + event.getId()))
                 .mapToLong(HitResponseDto::getHits)
-                .sum());
+                .sum();
 
-        event = eventRepository.save(event);
-        return eventMapper.eventToEventFullDto(event);
+        EventFullDto eventFullDto = eventMapper.eventToEventFullDto(event);
+        eventFullDto.setViews(viewCount);
+        return eventFullDto;
     }
 
     @Override
