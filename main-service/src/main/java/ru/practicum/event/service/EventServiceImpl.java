@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.practicum.HitRequestDto;
 import ru.practicum.HitResponseDto;
 import ru.practicum.AnalyticsClient;
 import ru.practicum.category.model.Category;
@@ -185,9 +184,6 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " and user id = " + userId + " is not found.");
         });
 
-        String uri = "/events/" + event.getId();
-        analyticsClient.addRequest(new HitRequestDto(request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)));
-
         List<HitResponseDto> views = getViews(Collections.singletonList(event));
 
         long viewCount = views.stream()
@@ -196,7 +192,7 @@ public class EventServiceImpl implements EventService {
                 .sum();
 
         EventFullDto eventFullDto = eventMapper.eventToEventFullDto(event);
-        eventFullDto.setViews(viewCount);
+        eventFullDto.setViews(viewCount + 1);
         return eventFullDto;
     }
 
