@@ -130,11 +130,18 @@ public class EventServiceImpl implements EventService {
                 .and(hasRangeEnd(rangeEnd))
                 .and(hasAvailable(onlyAvailable)), pageable);
 
-        updateViews(eventsPage.toList(), request);
+        List<HitResponseDto> views = getViews(eventsPage.toList());
 
         return eventsPage.stream()
                 .filter(event -> event.getPublishedOn() != null)
-                .map(eventMapper::eventToShortDto)
+                .map(event -> {
+                    EventShortDto dto = eventMapper.eventToShortDto(event);
+                    dto.setViews(views.stream()
+                            .filter(view -> view.getUri().equals("/events/" + event.getId()))
+                            .mapToLong(HitResponseDto::getHits)
+                            .sum());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -144,9 +151,15 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " was not found.");
         });
 
-        updateViews(Collections.singletonList(event), request);
+        List<HitResponseDto> views = getViews(Collections.singletonList(event));
 
-        return eventMapper.eventToEventFullDto(event);
+        EventFullDto dto = eventMapper.eventToEventFullDto(event);
+        dto.setViews(views.stream()
+                .filter(view -> view.getUri().equals("/events/" + event.getId()))
+                .mapToLong(HitResponseDto::getHits)
+                .sum());
+
+        return dto;
     }
 
     @Override
@@ -174,7 +187,12 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " and user id = " + userId + " is not found.");
         });
 
-        event.setViews(event.getViews() + 1);
+        List<HitResponseDto> views = getViews(Collections.singletonList(event));
+
+        event.setViews(views.stream()
+                .filter(view -> view.getUri().equals("/events/" + event.getId()))
+                .mapToLong(HitResponseDto::getHits)
+                .sum());
 
         event = eventRepository.save(event);
         return eventMapper.eventToEventFullDto(event);
@@ -208,39 +226,21 @@ public class EventServiceImpl implements EventService {
         return eventMapper.eventToEventFullDto(event);
     }
 
-    private void updateViews(List<Event> events, HttpServletRequest request) {
+    private List<HitResponseDto> getViews(List<Event> events) {
         LocalDateTime now = LocalDateTime.now();
 
         List<String> uris = events.stream()
                 .map(event -> "/events/" + event.getId())
                 .collect(Collectors.toList());
 
-        HitRequestDto hitRequestDto = new HitRequestDto();
-        hitRequestDto.setIp(request.getRemoteAddr());
-        hitRequestDto.setUri(request.getRequestURI());
-        hitRequestDto.setTimestamp(now);
-        hitRequestDto.setApp("main-service");
-
-        analyticsClient.addRequest(hitRequestDto);
-
-        ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStats(
+        ResponseEntity<List<HitResponseDto>> response = analyticsClient.getStats(
                 events.get(0).getPublishedOn().format(DTF),
                 now.format(DTF),
                 uris,
                 true
         );
 
-        if (listResponseEntity.getStatusCode() == HttpStatus.OK && listResponseEntity.getBody() != null) {
-            List<HitResponseDto> hitResponses = listResponseEntity.getBody();
-
-            for (Event event : events) {
-                Optional<HitResponseDto> hitResponseOpt = hitResponses.stream()
-                        .filter(hitResponse -> hitResponse.getUri().equals("/events/" + event.getId()))
-                        .findFirst();
-
-                hitResponseOpt.ifPresent(hitResponse -> event.setViews(hitResponse.getHits()));
-            }
-        }
+        return response.getBody();
     }
 
     private void updateEvent(Event event, Long userId, NewEventDto eventDto) {
