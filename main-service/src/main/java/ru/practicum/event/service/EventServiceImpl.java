@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.practicum/HitRequestDto;
+import ru.practicum.HitRequestDto;
 import ru.practicum.HitResponseDto;
 import ru.practicum.AnalyticsClient;
 import ru.practicum.category.model.Category;
