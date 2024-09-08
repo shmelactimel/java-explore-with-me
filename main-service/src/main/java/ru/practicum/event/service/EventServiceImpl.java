@@ -185,8 +185,6 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " and user id = " + userId + " is not found.");
         });
 
-        analyticsClient.addRequest("/events/" + eventId);
-
         List<HitResponseDto> views = getViews(Collections.singletonList(event));
 
         long viewCount = views.stream()
@@ -195,7 +193,7 @@ public class EventServiceImpl implements EventService {
                 .sum();
 
         EventFullDto eventFullDto = eventMapper.eventToEventFullDto(event);
-        eventFullDto.setViews(viewCount);
+        eventFullDto.setViews(viewCount + 1);
         return eventFullDto;
     }
 
@@ -227,12 +225,21 @@ public class EventServiceImpl implements EventService {
         return eventMapper.eventToEventFullDto(event);
     }
 
-    private List<HitResponseDto> getViews(List<Event> events) {
+    private List<HitResponseDto> getViews(List<Event> events, HttpServletRequest request) {
         LocalDateTime now = LocalDateTime.now();
 
         List<String> uris = events.stream()
                 .map(event -> "/events/" + event.getId())
                 .collect(Collectors.toList());
+
+        HitRequestDto hitRequestDto = HitRequestDto.builder()
+                .ip(request.getRemoteAddr())
+                .uri(request.getRequestURI())
+                .timestamp(now.format(DTF))
+                .app("main-service")
+                .build();
+
+        analyticsClient.addRequest(hitRequestDto);
 
         ResponseEntity<List<HitResponseDto>> response = analyticsClient.getStats(
                 events.get(0).getPublishedOn().format(DTF),
