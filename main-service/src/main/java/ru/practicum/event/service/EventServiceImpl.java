@@ -218,7 +218,6 @@ public class EventServiceImpl implements EventService {
         ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStats(LocalDateTime.now().format(DTF),
                 LocalDateTime.now().format(DTF),
                 Collections.singletonList(hitRequestDto.getUri()),
-                true,
                 request.getRemoteAddr());
 
         analyticsClient.addRequest(hitRequestDto);
