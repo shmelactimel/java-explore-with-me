@@ -27,6 +27,7 @@ public interface EventMapper {
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "publishedOn", ignore = true)
     @Mapping(target = "state", ignore = true)
+    @Mapping(target = "views", ignore = true)
     @Mapping(target = "compilations", ignore = true)
     Event newEventDtoToEvent(NewEventDto eventDto);
 

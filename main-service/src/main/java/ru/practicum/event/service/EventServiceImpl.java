@@ -34,8 +34,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -132,18 +130,12 @@ public class EventServiceImpl implements EventService {
                 .and(hasRangeEnd(rangeEnd))
                 .and(hasAvailable(onlyAvailable)), pageable);
 
-        List<EventShortDto> eventShortDtos = eventsPage.stream()
+        updateViews(eventsPage.toList(), request);
+
+        return eventsPage.stream()
                 .filter(event -> event.getPublishedOn() != null)
                 .map(eventMapper::eventToShortDto)
                 .collect(Collectors.toList());
-
-        Map<Long, Long> viewsMap = getViews(eventsPage.getContent(), request);
-
-        eventShortDtos.forEach(eventShortDto ->
-                eventShortDto.setViews(viewsMap.getOrDefault(eventShortDto.getId(), 0L))
-        );
-
-        return eventShortDtos;
     }
 
     @Override
@@ -152,13 +144,9 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " was not found.");
         });
 
-        Map<Long, Long> viewsMap = getViews(Collections.singletonList(event), request);
-        Long views = viewsMap.get(eventId);
+        updateViews(Collections.singletonList(event), request);
 
-        EventFullDto eventFullDto = eventMapper.eventToEventFullDto(event);
-        eventFullDto.setViews(views);
-
-        return eventFullDto;
+        return eventMapper.eventToEventFullDto(event);
     }
 
     @Override
@@ -186,13 +174,10 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " and user id = " + userId + " is not found.");
         });
 
-        Map<Long, Long> viewsMap = getViews(Collections.singletonList(event), null);
-        Long views = viewsMap.get(eventId) + 1;
+        event.setViews(event.getViews() + 1);
 
-        EventFullDto eventFullDto = eventMapper.eventToEventFullDto(event);
-        eventFullDto.setViews(views);
-
-        return eventFullDto;
+        event = eventRepository.save(event);
+        return eventMapper.eventToEventFullDto(event);
     }
 
     @Override
@@ -223,45 +208,29 @@ public class EventServiceImpl implements EventService {
         return eventMapper.eventToEventFullDto(event);
     }
 
-    private Map<Long, Long> getViews(List<Event> events, HttpServletRequest request) {
-        LocalDateTime now = LocalDateTime.now();
+    private void updateViews(List<Event> events, HttpServletRequest request) {
+        HitRequestDto hitrequestDto = new HitRequestDto();
+        hitrequestDto.setIp(request.getRemoteAddr());
+        hitrequestDto.setUri(request.getRequestURI());
+        hitrequestDto.setTimestamp(LocalDateTime.now());
+        hitrequestDto.setApp("main-service");
 
-        List<String> uris = events.stream()
-                .map(event -> "/events/" + event.getId())
-                .collect(Collectors.toList());
+        ResponseEntity<List<HitResponseDto>> listResponseEntity = statsClient.getStatsByIp(LocalDateTime.now().format(DTF),
+                LocalDateTime.now().format(DTF),
+                Collections.singletonList(hitRequestDto.getUri()),
+                true,
+                request.getRemoteAddr());
 
-        HitRequestDto hitRequestDto = new HitRequestDto();
-        hitRequestDto.setIp(request.getRemoteAddr());
-        hitRequestDto.setUri(request.getRequestURI());
-        hitRequestDto.setTimestamp(now);
-        hitRequestDto.setApp("main-service");
+        statsClient.addRequest(hitRequestDto);
 
-        analyticsClient.addRequest(hitRequestDto);
-
-        ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStats(
-                events.get(0).getPublishedOn().format(DTF),
-                now.format(DTF),
-                uris,
-                true
-        );
-
-        Map<Long, Long> viewsMap = new HashMap<>();
-
-        if (listResponseEntity.getStatusCode() == HttpStatus.OK && listResponseEntity.getBody() != null) {
-            List<HitResponseDto> hitResponses = listResponseEntity.getBody();
-
-            for (Event event : events) {
-                Optional<HitResponseDto> hitResponseOpt = hitResponses.stream()
-                        .filter(hitResponse -> hitResponse.getUri().equals("/events/" + event.getId()))
-                        .findFirst();
-
-                if (hitResponseOpt.isPresent()) {
-                    viewsMap.put(event.getId(), hitResponseOpt.get().getHits());
-                }
-            }
+        if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
+                Optional.ofNullable(listResponseEntity.getBody())
+                        .map(List::isEmpty).orElse(false)) {
+            events.forEach(event -> {
+                event.setViews(event.getViews() + 1);
+            });
+            eventRepository.saveAll(events);
         }
-
-        return viewsMap;
     }
 
     private void updateEvent(Event event, Long userId, NewEventDto eventDto) {
