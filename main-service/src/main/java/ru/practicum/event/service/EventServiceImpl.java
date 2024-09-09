@@ -129,19 +129,18 @@ public class EventServiceImpl implements EventService {
                 .and(hasRangeEnd(rangeEnd))
                 .and(hasAvailable(onlyAvailable)), pageable);
 
-        List<HitResponseDto> viewStats = getViews(eventsPage.toList(), request);
-
-        return eventsPage.stream()
+        List<EventShortDto> eventShortDtos = eventsPage.stream()
                 .filter(event -> event.getPublishedOn() != null)
-                .map(event -> {
-                    EventShortDto dto = eventMapper.eventToShortDto(event);
-                    viewStats.stream()
-                            .filter(hit -> hit.getUri().equals("/events/" + event.getId()))
-                            .findFirst()
-                            .ifPresent(hit -> dto.setViews(hit.getHits()));
-                    return dto;
-                })
+                .map(eventMapper::eventToShortDto)
                 .collect(Collectors.toList());
+
+        Map<Long, Long> viewsMap = getViews(eventsPage.getContent(), request);
+
+        eventShortDtos.forEach(eventShortDto ->
+                eventShortDto.setViews(viewsMap.getOrDefault(eventShortDto.getId(), 0L))
+        );
+
+        return eventShortDtos;
     }
 
     @Override
@@ -150,13 +149,11 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " was not found.");
         });
 
-        List<HitResponseDto> viewStats = getViews(Collections.singletonList(event), request);
+        Map<Long, Long> viewsMap = getViews(Collections.singletonList(event), request);
+        Long views = viewsMap.get(eventId);
 
         EventFullDto eventFullDto = eventMapper.eventToEventFullDto(event);
-        viewStats.stream()
-                .filter(hit -> hit.getUri().equals("/events/" + event.getId()))
-                .findFirst()
-                .ifPresent(hit -> eventFullDto.setViews(hit.getHits()));
+        eventFullDto.setViews(views);
 
         return eventFullDto;
     }
@@ -186,13 +183,11 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " and user id = " + userId + " is not found.");
         });
 
-        List<HitResponseDto> viewStats = getViews(Collections.singletonList(event), null);
+        Map<Long, Long> viewsMap = getViews(Collections.singletonList(event), null);
+        Long views = viewsMap.get(eventId) + 1;
 
         EventFullDto eventFullDto = eventMapper.eventToEventFullDto(event);
-        viewStats.stream()
-                .filter(hit -> hit.getUri().equals("/events/" + event.getId()))
-                .findFirst()
-                .ifPresent(hit -> eventFullDto.setViews(hit.getHits()));
+        eventFullDto.setViews(views);
 
         return eventFullDto;
     }
@@ -225,7 +220,7 @@ public class EventServiceImpl implements EventService {
         return eventMapper.eventToEventFullDto(event);
     }
 
-    private void getViews(List<Event> events, HttpServletRequest request) {
+    private void updateViews(List<Event> events, HttpServletRequest request) {
         LocalDateTime now = LocalDateTime.now();
 
         List<String> uris = events.stream()
@@ -247,11 +242,23 @@ public class EventServiceImpl implements EventService {
                 true
         );
 
+        Map<Long, Long> viewsMap = new HashMap<>();
+
         if (listResponseEntity.getStatusCode() == HttpStatus.OK && listResponseEntity.getBody() != null) {
-            return listResponseEntity.getBody();
+            List<HitResponseDto> hitResponses = listResponseEntity.getBody();
+
+            for (Event event : events) {
+                Optional<HitResponseDto> hitResponseOpt = hitResponses.stream()
+                        .filter(hitResponse -> hitResponse.getUri().equals("/events/" + event.getId()))
+                        .findFirst();
+
+                if (hitResponseOpt.isPresent()) {
+                    viewsMap.put(event.getId(), hitResponseOpt.get().getHits());
+                }
+            }
         }
 
-        return Collections.emptyList();
+        return viewsMap;
     }
 
     private void updateEvent(Event event, Long userId, NewEventDto eventDto) {
