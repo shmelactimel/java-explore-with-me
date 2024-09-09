@@ -215,13 +215,13 @@ public class EventServiceImpl implements EventService {
         hitrequestDto.setTimestamp(LocalDateTime.now());
         hitrequestDto.setApp("main-service");
 
-        ResponseEntity<List<HitResponseDto>> listResponseEntity = statsClient.getStatsByIp(LocalDateTime.now().format(DTF),
+        ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStats(LocalDateTime.now().format(DTF),
                 LocalDateTime.now().format(DTF),
                 Collections.singletonList(hitRequestDto.getUri()),
                 true,
                 request.getRemoteAddr());
 
-        statsClient.addRequest(hitRequestDto);
+        analyticsClient.addRequest(hitRequestDto);
 
         if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
                 Optional.ofNullable(listResponseEntity.getBody())
