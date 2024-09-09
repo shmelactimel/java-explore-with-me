@@ -209,11 +209,11 @@ public class EventServiceImpl implements EventService {
     }
 
     private void updateViews(List<Event> events, HttpServletRequest request) {
-        HitRequestDto hitrequestDto = new HitRequestDto();
-        hitrequestDto.setIp(request.getRemoteAddr());
-        hitrequestDto.setUri(request.getRequestURI());
-        hitrequestDto.setTimestamp(LocalDateTime.now());
-        hitrequestDto.setApp("main-service");
+        HitRequestDto hitRequestDto = new HitRequestDto();
+        hitRequestDto.setIp(request.getRemoteAddr());
+        hitRequestDto.setUri(request.getRequestURI());
+        hitRequestDto.setTimestamp(LocalDateTime.now());
+        hitRequestDto.setApp("main-service");
 
         ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStats(LocalDateTime.now().format(DTF),
                 LocalDateTime.now().format(DTF),
