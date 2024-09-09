@@ -223,7 +223,7 @@ public class EventServiceImpl implements EventService {
         return eventMapper.eventToEventFullDto(event);
     }
 
-    private void getViews(List<Event> events, HttpServletRequest request) {
+    private Map<Long, Long> getViews(List<Event> events, HttpServletRequest request) {
         LocalDateTime now = LocalDateTime.now();
 
         List<String> uris = events.stream()
