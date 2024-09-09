@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.HitRequestDto;
@@ -28,7 +29,7 @@ import ru.practicum.exception.RequestConflictException;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -128,16 +129,16 @@ public class EventServiceImpl implements EventService {
                 .and(hasRangeEnd(rangeEnd))
                 .and(hasAvailable(onlyAvailable)), pageable);
 
-        List<HitResponseDto> views = getViews(eventsPage.toList());
+        List<HitResponseDto> viewStats = getViews(eventsPage.toList(), request);
 
         return eventsPage.stream()
                 .filter(event -> event.getPublishedOn() != null)
                 .map(event -> {
                     EventShortDto dto = eventMapper.eventToShortDto(event);
-                    dto.setViews(views.stream()
-                            .filter(view -> view.getUri().equals("/events/" + event.getId()))
-                            .mapToLong(HitResponseDto::getHits)
-                            .sum());
+                    viewStats.stream()
+                            .filter(hit -> hit.getUri().equals("/events/" + event.getId()))
+                            .findFirst()
+                            .ifPresent(hit -> dto.setViews(hit.getHits()));
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -149,15 +150,15 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " was not found.");
         });
 
-        List<HitResponseDto> views = getViews(Collections.singletonList(event));
+        List<HitResponseDto> viewStats = getViews(Collections.singletonList(event), request);
 
-        EventFullDto dto = eventMapper.eventToEventFullDto(event);
-        dto.setViews(views.stream()
-                .filter(view -> view.getUri().equals("/events/" + event.getId()))
-                .mapToLong(HitResponseDto::getHits)
-                .sum());
+        EventFullDto eventFullDto = eventMapper.eventToEventFullDto(event);
+        viewStats.stream()
+                .filter(hit -> hit.getUri().equals("/events/" + event.getId()))
+                .findFirst()
+                .ifPresent(hit -> eventFullDto.setViews(hit.getHits()));
 
-        return dto;
+        return eventFullDto;
     }
 
     @Override
@@ -185,15 +186,14 @@ public class EventServiceImpl implements EventService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " and user id = " + userId + " is not found.");
         });
 
-        List<HitResponseDto> views = getViews(Collections.singletonList(event));
-
-        long viewCount = views.stream()
-                .filter(view -> view.getUri().equals("/events/" + event.getId()))
-                .mapToLong(HitResponseDto::getHits)
-                .sum();
+        List<HitResponseDto> viewStats = getViews(Collections.singletonList(event), null);
 
         EventFullDto eventFullDto = eventMapper.eventToEventFullDto(event);
-        eventFullDto.setViews(viewCount + 1);
+        viewStats.stream()
+                .filter(hit -> hit.getUri().equals("/events/" + event.getId()))
+                .findFirst()
+                .ifPresent(hit -> eventFullDto.setViews(hit.getHits()));
+
         return eventFullDto;
     }
 
@@ -225,7 +225,7 @@ public class EventServiceImpl implements EventService {
         return eventMapper.eventToEventFullDto(event);
     }
 
-    private List<HitResponseDto> getViews(List<Event> events, HttpServletRequest request) {
+    private void getViews(List<Event> events, HttpServletRequest request) {
         LocalDateTime now = LocalDateTime.now();
 
         List<String> uris = events.stream()
@@ -240,14 +240,18 @@ public class EventServiceImpl implements EventService {
 
         analyticsClient.addRequest(hitRequestDto);
 
-        ResponseEntity<List<HitResponseDto>> response = analyticsClient.getStats(
+        ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStats(
                 events.get(0).getPublishedOn().format(DTF),
                 now.format(DTF),
                 uris,
                 true
         );
 
-        return response.getBody();
+        if (listResponseEntity.getStatusCode() == HttpStatus.OK && listResponseEntity.getBody() != null) {
+            return listResponseEntity.getBody();
+        }
+
+        return Collections.emptyList();
     }
 
     private void updateEvent(Event event, Long userId, NewEventDto eventDto) {
