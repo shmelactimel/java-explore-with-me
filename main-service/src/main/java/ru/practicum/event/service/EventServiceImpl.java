@@ -216,7 +216,7 @@ public class EventServiceImpl implements EventService {
         hitRequestDto.setApp("main-service");
 
         ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStats(
-                events.get(0).getPublishedOn().format(DTF)
+                events.get(0).getPublishedOn().format(DTF),
                 LocalDateTime.now().format(DTF),
                 Collections.singletonList(hitRequestDto.getUri()),
                 true
