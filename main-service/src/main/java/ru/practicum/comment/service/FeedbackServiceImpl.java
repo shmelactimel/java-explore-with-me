@@ -78,7 +78,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             throw new RequestConflictException("Users are not allowed to update feedbacks, which are pending moderation.");
         }
 
-        feedback.setText(newFeedbackDto.getText());
+        feedback.setText(updateFeedbackDto.getText());
         feedback.setCreatedOn(LocalDateTime.now());
         feedback.setStatus(FeedbackStatus.PENDING);
 
