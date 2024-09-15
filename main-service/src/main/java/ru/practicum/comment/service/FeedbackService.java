@@ -3,6 +3,7 @@ package ru.practicum.comment.service;
 import ru.practicum.comment.dto.FeedbackDto;
 import ru.practicum.comment.dto.FeedbackStatusUpdateRequest;
 import ru.practicum.comment.dto.NewFeedbackDto;
+import ru.practicum.comment.dto.UpdateFeedbackDto;
 import ru.practicum.comment.model.FeedbackStatus;
 
 import java.time.LocalDateTime;

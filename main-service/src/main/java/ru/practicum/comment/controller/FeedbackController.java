@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.comment.dto.FeedbackDto;
 import ru.practicum.comment.dto.NewFeedbackDto;
+import ru.practicum.comment.dto.UpdateFeedbackDto;
 import ru.practicum.comment.service.FeedbackService;
 
 import jakarta.validation.Valid;

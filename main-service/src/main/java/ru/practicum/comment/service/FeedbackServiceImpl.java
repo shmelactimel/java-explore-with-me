@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.comment.dto.FeedbackDto;
 import ru.practicum.comment.dto.FeedbackStatusUpdateRequest;
 import ru.practicum.comment.dto.NewFeedbackDto;
+import ru.practicum.comment.dto.UpdateFeedbackDto;
 import ru.practicum.comment.mapper.FeedbackMapper;
 import ru.practicum.comment.model.Feedback;
 import ru.practicum.comment.model.FeedbackStatus;
