@@ -67,7 +67,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public FeedbackDto updateUserFeedback(Long userId, Long eventId, Long feedbackId, NewFeedbackDto newFeedbackDto) {
+    public FeedbackDto updateUserFeedback(Long userId, Long eventId, Long feedbackId, UpdateFeedbackDto updateFeedbackDto) {
         Feedback feedback = feedbackRepository.findByIdAndUserIdAndEventId(feedbackId, userId, eventId).orElseThrow(() -> {
             throw new ObjectNotFoundException("Comment with id = " + feedbackId + " by user id = " + userId +
                     " for event id = " + eventId + " doesn't exist.");

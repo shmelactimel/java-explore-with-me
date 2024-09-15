@@ -60,11 +60,11 @@ public class FeedbackController {
     public FeedbackDto updateUserFeedback(@PathVariable @Positive Long userId,
                                         @PathVariable @Positive Long eventId,
                                         @PathVariable @Positive Long feedbackId,
-                                        @RequestBody @Valid NewFeedbackDto newFeedbackDto) {
+                                        @RequestBody @Valid UpdateFeedbackDto updateFeedbackDto) {
 
         log.info("Calling PATCH: /users/{userId}/events/{eventId}/feedbacks/{feedbackId} with 'userId': {}, 'eventId': {}," +
-                " , 'feedbackId': {}, 'newFeedbackDto': {}", userId, eventId, feedbackId, newFeedbackDto);
-        return feedbackService.updateUserFeedback(userId, eventId, feedbackId, newFeedbackDto);
+                " , 'feedbackId': {}, 'updateFeedbackDto': {}", userId, eventId, feedbackId, updateFeedbackDto);
+        return feedbackService.updateUserFeedback(userId, eventId, feedbackId, updateFeedbackDto);
     }
 
     @DeleteMapping("/events/{eventId}/feedbacks/{feedbackId}")
