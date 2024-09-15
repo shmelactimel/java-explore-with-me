@@ -6,6 +6,7 @@ import ru.practicum.event.model.Event;
 import ru.practicum.user.model.User;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,7 +21,7 @@ public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     private String text;
 
     @Column(name = "created")
