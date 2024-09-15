@@ -13,7 +13,7 @@ public interface FeedbackService {
 
     FeedbackDto addUserFeedback(Long userId, Long eventId, NewFeedbackDto newFeedbackDto);
 
-    FeedbackDto updateUserFeedback(Long userId, Long eventId, Long feedbackId, updateFeedbackDto updateFeedbackDto);
+    FeedbackDto updateUserFeedback(Long userId, Long eventId, Long feedbackId, UpdateFeedbackDto updateFeedbackDto);
 
     void deleteUserFeedback(Long userId, Long eventId, Long feedbackId);
 
