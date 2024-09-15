@@ -22,9 +22,7 @@ public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank
-    @Size(min = 5, max = 5000)
+    
     private String text;
 
     @Column(name = "created")

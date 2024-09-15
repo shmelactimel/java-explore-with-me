@@ -52,8 +52,8 @@ public class FeedbackServiceImpl implements FeedbackService {
             throw new ObjectNotFoundException("Event with id = " + eventId + " doesn't exist.");
         });
 
-        if (!event.getState().equals(EventState.PUBLISHED)) {
-            throw new RequestConflictException("Users are not allowed to feedback on unpublished events.");
+        if (!event.getState().equals(EventState.PUBLISHED) || event.getInitiator().getId().equals(userId)) {
+            throw new RequestConflictException("Users are not allowed to feedback on unpublished events or their own events.");
         }
 
         Feedback feedback = feedbackMapper.newFeedbackDtoToFeedback(newFeedbackDto);
