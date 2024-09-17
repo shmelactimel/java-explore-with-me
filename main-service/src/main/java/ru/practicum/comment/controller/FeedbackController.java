@@ -78,4 +78,10 @@ public class FeedbackController {
                 " , 'feedbackId': {}", userId, eventId, feedbackId);
         feedbackService.deleteUserFeedback(userId, eventId, feedbackId);
     }
+
+    @GetMapping("/events/{eventId}/feedbacks/count")
+    public int getFeedbackCount(@PathVariable @Positive Long eventId) {
+        log.info("Calling GET: /events/{eventId}/feedbacks/count with 'eventId': {}", eventId);
+        return feedbackService.getFeedbackCountForEvent(eventId);
+    }
 }

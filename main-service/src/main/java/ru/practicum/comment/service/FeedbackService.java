@@ -26,4 +26,6 @@ public interface FeedbackService {
     List<FeedbackDto> getAdminFeedbacks(String text, List<Long> users, List<FeedbackStatus> statuses, List<Long> events, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
 
     List<FeedbackDto> moderateAdminFeedbacks(FeedbackStatusUpdateRequest updateRequest);
+
+    int getFeedbackCountForEvent(Long eventId);
 }

@@ -183,4 +183,9 @@ public class FeedbackServiceImpl implements FeedbackService {
                 throw new IncorrectRequestException("Incorrect admin moderate request with status 'Pending'.");
         }
     }
+
+    @Override
+    public int getFeedbackCountForEvent(Long eventId) {
+        return feedbackRepository.countByEventIdAndStatus(eventId, FeedbackStatus.PUBLISHED);
+    }
 }

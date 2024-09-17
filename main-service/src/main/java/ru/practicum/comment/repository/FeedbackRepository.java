@@ -22,4 +22,6 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     List<Feedback> findAllByIdInAndStatus(List<Long> feedbackIds, FeedbackStatus status);
 
     boolean existsByIdAndUserIdAndEventIdAndStatus(Long feedbackId, Long userId, Long eventId, FeedbackStatus published);
+
+    int countByEventIdAndStatus(Long eventId, FeedbackStatus status);
 }
