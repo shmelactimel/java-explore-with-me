@@ -1410,54 +1410,6 @@
           "response": []
         },
         {
-          "name": "Feedback 4 set Deleted",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Response must have status 200 and json body response\", function () {\r",
-                  "    pm.response.to.be.ok;   \r",
-                  "    pm.response.to.be.withBody;\r",
-                  "    pm.response.to.be.json;\r",
-                  "});\r",
-                  "\r",
-                  "const target = pm.response.json();\r",
-                  "\r",
-                  "pm.test(\"Response body must contain an empty list\"), function () {\r",
-                  "    pm.expect(target).length(0);\r",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "protocolProfileBehavior": {
-            "disabledSystemHeaders": {}
-          },
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"feedbackIds\": [4],\r\n    \"status\": \"DELETED\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": "{{baseUrl}}/admin/feedbacks"
-          },
-          "response": []
-        },
-        {
           "name": "User 138 Event 108 Feedback",
           "event": [
             {
@@ -1604,66 +1556,6 @@
                 {
                   "key": "eventId",
                   "value": "109"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Feedback 5 Pending by User 139 for Event 109",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Response must have status 409 and json body response\", function () {\r",
-                  "    pm.response.to.have.status(409);   \r",
-                  "    pm.response.to.be.withBody;\r",
-                  "    pm.response.to.be.json;\r",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "protocolProfileBehavior": {
-            "disabledSystemHeaders": {}
-          },
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/users/:userId/events/:eventId/feedbacks/:feedbackId",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "users",
-                ":userId",
-                "events",
-                ":eventId",
-                "feedbacks",
-                ":feedbackId"
-              ],
-              "variable": [
-                {
-                  "key": "userId",
-                  "value": "139"
-                },
-                {
-                  "key": "eventId",
-                  "value": "109"
-                },
-                {
-                  "key": "feedbackId",
-                  "value": "5"
                 }
               ]
             }
