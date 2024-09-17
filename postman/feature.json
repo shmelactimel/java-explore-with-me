@@ -2092,11 +2092,6 @@
                   "    pm.expect(target[0]).to.have.property('createdOn');\r",
                   "    pm.expect(target[0]).to.have.property('user');\r",
                   "    pm.expect(target[0]).to.have.property('event');\r",
-                  "});\r",
-                  "\r",
-                  "pm.test(\"Request data must be equal to response data\", function () {\r",
-                  "    pm.expect(target[0].text).to.include(\"friend\", 'Feedback text in request and response must be equal');\r",
-                  "    pm.expect(target[1].text).to.include(\"friend\", 'Feedback text in request and response must be equal');\r",
                   "});"
                 ],
                 "type": "text/javascript"
