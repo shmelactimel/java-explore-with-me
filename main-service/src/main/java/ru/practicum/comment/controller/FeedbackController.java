@@ -8,6 +8,7 @@ import ru.practicum.comment.dto.FeedbackDto;
 import ru.practicum.comment.dto.NewFeedbackDto;
 import ru.practicum.comment.dto.UpdateFeedbackDto;
 import ru.practicum.comment.service.FeedbackService;
+import ru.practicum.event.service.EventService;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -83,5 +84,11 @@ public class FeedbackController {
     public int getFeedbackCount(@PathVariable @Positive Long eventId) {
         log.info("Calling GET: /events/{eventId}/feedbacks/count with 'eventId': {}", eventId);
         return feedbackService.getFeedbackCountForEvent(eventId);
+    }
+
+    @GetMapping("/count")
+    public List<EventCommentCountDto> getEventCommentCounts(@RequestParam List<Long> eventIds) {
+        log.info("Calling GET: /events/comments/count with 'eventIds': {}", eventIds);
+        return eventService.getEventCommentCounts();
     }
 }

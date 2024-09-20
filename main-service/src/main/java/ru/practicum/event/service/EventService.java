@@ -4,6 +4,7 @@ import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.EventUpdateDto;
 import ru.practicum.event.dto.NewEventDto;
+import ru.practicum.event.dto.EventCommentCountDto;
 import ru.practicum.event.model.enums.EventSort;
 import ru.practicum.event.model.enums.EventState;
 
@@ -30,4 +31,6 @@ public interface EventService {
     EventFullDto getUserEventById(Long userId, Long eventId);
 
     EventFullDto updateUserEventById(Long userId, Long eventId, EventUpdateDto eventDto);
+
+    List<EventCommentCountDto> getEventCommentCounts();
 }

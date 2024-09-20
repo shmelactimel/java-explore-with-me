@@ -24,4 +24,7 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     boolean existsByIdAndUserIdAndEventIdAndStatus(Long feedbackId, Long userId, Long eventId, FeedbackStatus published);
 
     int countByEventIdAndStatus(Long eventId, FeedbackStatus status);
+
+    @Query("SELECT f.event.id, COUNT(f) FROM Feedback f WHERE f.status = :status GROUP BY f.event.id")
+    List<Object[]> findEventCommentCounts(@Param("status") FeedbackStatus status);
 }
