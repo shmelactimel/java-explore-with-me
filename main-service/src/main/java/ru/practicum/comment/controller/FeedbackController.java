@@ -8,6 +8,7 @@ import ru.practicum.comment.dto.FeedbackDto;
 import ru.practicum.comment.dto.NewFeedbackDto;
 import ru.practicum.comment.dto.UpdateFeedbackDto;
 import ru.practicum.comment.service.FeedbackService;
+import ru.practicum.event.dto.EventCommentCountDto;
 import ru.practicum.event.service.EventService;
 
 import jakarta.validation.Valid;
