@@ -9,9 +9,9 @@ import ru.practicum.event.model.Location;
 import ru.practicum.event.model.enums.EventState;
 import ru.practicum.user.dto.UserShortDto;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.validation.constraints.Size;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data

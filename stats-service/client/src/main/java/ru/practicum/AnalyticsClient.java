@@ -20,22 +20,21 @@ public class AnalyticsClient {
     }
 
     public ResponseEntity<List<HitResponseDto>> getStats(String start, String end, List<String> uris, Boolean unique) {
-        return webClient.get()
+        ResponseEntity<List<HitResponseDto>> listResponseEntity = webClient.get()
                 .uri(uriBuilder -> {
                     uriBuilder.path("/stats")
                             .queryParam("start", start)
                             .queryParam("end", end);
-                    if (uris != null && !uris.isEmpty()) {
+                    if (uris != null)
                         uriBuilder.queryParam("uris", String.join(",", uris));
-                    }
-                    if (unique != null) {
+                    if (unique != null)
                         uriBuilder.queryParam("unique", unique);
-                    }
                     return uriBuilder.build();
                 })
                 .retrieve()
                 .toEntityList(HitResponseDto.class)
                 .block();
+        return listResponseEntity;
     }
 
     public ResponseEntity<List<HitResponseDto>> getStatsByIp(String start,

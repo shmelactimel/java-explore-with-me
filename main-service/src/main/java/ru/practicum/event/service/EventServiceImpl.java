@@ -17,6 +17,7 @@ import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.EventUpdateDto;
 import ru.practicum.event.dto.NewEventDto;
+import ru.practicum.event.dto.EventCommentCountDto;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.enums.EventSort;
@@ -28,8 +29,10 @@ import ru.practicum.exception.ObjectNotFoundException;
 import ru.practicum.exception.RequestConflictException;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
+import ru.practicum.comment.repository.FeedbackRepository;
+import ru.practicum.comment.model.FeedbackStatus;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -50,6 +53,15 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final EventMapper eventMapper;
     private final AnalyticsClient analyticsClient;
+    private final FeedbackRepository feedbackRepository;
+
+    public List<EventCommentCountDto> getEventCommentCounts() {
+        List<Object[]> result = feedbackRepository.findEventCommentCounts(FeedbackStatus.PUBLISHED);
+
+        return result.stream()
+                .map(objects -> new EventCommentCountDto((Long) objects[0], (Long) objects[1]))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public List<EventFullDto> getAdminEvents(List<Long> users, List<EventState> states, List<Long> categories,
@@ -209,37 +221,28 @@ public class EventServiceImpl implements EventService {
     }
 
     private void updateViews(List<Event> events, HttpServletRequest request) {
-        LocalDateTime now = LocalDateTime.now();
-
-        List<String> uris = events.stream()
-                .map(event -> "/events/" + event.getId())
-                .collect(Collectors.toList());
-
         HitRequestDto hitRequestDto = new HitRequestDto();
         hitRequestDto.setIp(request.getRemoteAddr());
         hitRequestDto.setUri(request.getRequestURI());
-        hitRequestDto.setTimestamp(now);
+        hitRequestDto.setTimestamp(LocalDateTime.now());
         hitRequestDto.setApp("main-service");
-
-        analyticsClient.addRequest(hitRequestDto);
 
         ResponseEntity<List<HitResponseDto>> listResponseEntity = analyticsClient.getStats(
                 events.get(0).getPublishedOn().format(DTF),
-                now.format(DTF),
-                uris,
+                LocalDateTime.now().format(DTF),
+                Collections.singletonList(hitRequestDto.getUri()),
                 true
         );
 
-        if (listResponseEntity.getStatusCode() == HttpStatus.OK && listResponseEntity.getBody() != null) {
-            List<HitResponseDto> hitResponses = listResponseEntity.getBody();
+        analyticsClient.addRequest(hitRequestDto);
 
-            for (Event event : events) {
-                Optional<HitResponseDto> hitResponseOpt = hitResponses.stream()
-                        .filter(hitResponse -> hitResponse.getUri().equals("/events/" + event.getId()))
-                        .findFirst();
-
-                hitResponseOpt.ifPresent(hitResponse -> event.setViews(hitResponse.getHits()));
-            }
+        if (listResponseEntity.getStatusCode() == HttpStatus.OK &&
+                Optional.ofNullable(listResponseEntity.getBody())
+                        .map(List::isEmpty).orElse(false)) {
+            events.forEach(event -> {
+                event.setViews(event.getViews() + 1);
+            });
+            eventRepository.saveAll(events);
         }
     }
 

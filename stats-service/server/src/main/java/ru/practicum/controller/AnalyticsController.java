@@ -10,7 +10,7 @@ import ru.practicum.HitRequestDto;
 import ru.practicum.HitResponseDto;
 import ru.practicum.service.AnalyticsServiceImpl;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
