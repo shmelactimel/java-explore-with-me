@@ -22,6 +22,7 @@ import java.util.List;
 public class FeedbackController {
 
     private final FeedbackService feedbackService;
+    private final EventService eventService;
 
     @PostMapping("/events/{eventId}/feedbacks")
     @ResponseStatus(HttpStatus.CREATED)
